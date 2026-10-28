@@ -1,0 +1,24 @@
+{{- if .Values.route.enabled }}
+{{- $hostname := required "route.hostname is required when route.enabled=true" .Values.route.hostname }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "app01.fullname" . }}
+  labels:
+    {{- include "app01.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - name: {{ .Values.route.gateway.name }}
+      namespace: {{ .Values.route.gateway.namespace }}
+      sectionName: {{ .Values.route.gateway.listener }}
+  hostnames:
+    - {{ $hostname | quote }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: {{ include "app01.fullname" . }}
+          port: {{ .Values.service.port }}
+{{- end }}

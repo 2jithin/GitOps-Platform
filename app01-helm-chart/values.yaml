@@ -1,0 +1,28 @@
+replicaCount: 1
+fullnameOverride: app01
+
+image:
+  repository: nginxinc/nginx-unprivileged
+  tag: alpine
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 128Mi
+
+route:
+  enabled: false
+  hostname: ""
+  gateway:
+    name: skyfleet-gateway
+    namespace: envoy-gateway-system
+    listener: http

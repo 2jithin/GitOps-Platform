@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app01-green
+  namespace: argocd
+spec:
+  project: platform-workloads
+  source:
+    repoURL: https://github.com/2jithin/GitOps-Platform.git
+    targetRevision: main
+    path: app01-helm-chart
+    helm:
+      valueFiles:
+        - values-green.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd-test-app
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - FailOnSharedResource=true
